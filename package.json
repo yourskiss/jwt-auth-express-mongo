@@ -1,0 +1,28 @@
+{
+  "name": "jwt-auth-express-mongo",
+  "version": "1.0.0",
+  "description": "jwt token based authantication using express and mongo",
+  "keywords": [
+    "jwt",
+    "token",
+    "authantication",
+    "express",
+    "mongo"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "license": "ISC",
+  "author": "ksingh 2.O",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "node --test",
+    "dev": "node --env-file=.env --watch app.js",
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
