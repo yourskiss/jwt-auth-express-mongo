@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Logs for <%= date %></title>
+  <style>
+    
+  </style>
+</head>
+<body>
+<%- include('../partials/header') %>
+<section class="sectionmin">
+  <h1  class="mainheading">📄 Report Logs</h1>
+
+<section class="logscontrol">
+  <div style="display: flex; justify-content: flex-start; column-gap: 20px;">
+    <form  id="logFormByDate" method="get" action="/logs/report">
+      <label for="dateSelect">By Date:</label>
+      <select id="dateSelect" name="date" onchange="document.getElementById('logFormByDate').submit()">
+        <% availableDates?.forEach(d => { %>
+          <option value="<%= d %>" <%= d === date ? 'selected' : '' %>><%= d %></option>
+        <% }); %>
+      </select>
+    </form>
+    <form id="logFormByLavel" method="GET" action="/logs/report">
+      <input type="hidden" name="date" value="<%= date %>" />
+      <label for="level">By Level:</label>
+      <select name="level" id="level" onchange="document.getElementById('logFormByLavel').submit()">
+        <option value="" <%= levelFilter === '' ? 'selected' : '' %>>All</option>
+        <option value="info" <%= levelFilter === 'info' ? 'selected' : '' %>>Info</option>
+        <option value="warn" <%= levelFilter === 'warn' ? 'selected' : '' %>>Warn</option>
+        <option value="error" <%= levelFilter === 'error' ? 'selected' : '' %>>Error</option>
+      </select>
+    </form>
+  </div>
+
+  <% if (logs.length !== 0) { %>
+  <p>
+    <a href="/logs/download?date=<%= date %>">Download Report </a>
+  </p>
+  <% }   %>
+</section>
+
+  <% if (logs.length === 0) { %>
+      <% if (levelFilter) { %>
+        <p class="logsNotFound">No <b><%= levelFilter.toUpperCase() %></b> logs found for <b><%= date %></b>.</p>
+      <% } else { %>
+        <p class="logsNotFound">No logs found for <b><%= date %></b>.</p>
+      <% } %>
+  <% } else { %>
+    <table class="logstable">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Level</th>
+          <th>Message</th>
+           <th>Metadata</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% logs.forEach(log => { %>
+          <% const { timestamp, level, message, ...meta } = log; %>
+          <tr>
+            <td><%= timestamp %></td>
+            <td><%= level  %></td>
+            <td><%= message %></td>
+            <td>
+              <pre><%= JSON.stringify(meta, null, 2) %></pre>
+            </td> 
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+
+
+
+
+
+</section>
+<%- include('../partials/footer', { title: 'EMP Management System' }) %>
+</body>
+</html>

@@ -1,20 +1,18 @@
 {
-  "name": "jwt-auth-express-mongo",
+  "name": "cred-and-session-based-authentication-using-express-and-mongodb",
   "version": "1.0.0",
-  "description": "jwt token based authantication using express and mongo",
+  "description": "Cred & Session-based authentication using Express & mongoDB",
   "keywords": [
-    "jwt",
-    "token",
-    "authantication",
-    "express",
-    "mongo"
+    "mongoose",
+    "mongoose schema",
+    "mongoDB",
+    "express.js",
+    "cred",
+    "authentication",
+    "Session-based"
   ],
-  "repository": {
-    "type": "git",
-    "url": "."
-  },
   "license": "ISC",
-  "author": "ksingh 2.O",
+  "author": "K.Singh",
   "type": "module",
   "main": "app.js",
   "scripts": {
@@ -23,6 +21,29 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "bcrypt": "^6.0.0",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "deep-email-validator": "^0.1.21",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-useragent": "^1.0.15",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.8.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.19.0",
+    "mongoose": "^8.18.1",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.6",
+    "sharp": "^0.34.4",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "twilio": "^5.10.1",
+    "uuid": "^13.0.0",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^4.1.8"
   }
 }

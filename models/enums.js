@@ -1,0 +1,24 @@
+// models/enums.js
+export const enumDepartments = ['hr', 'art', 'engineering', 'sales', 'marketing', 'finance', 'support'];
+export const enumApproval =  ['hr', 'admin', 'rm', 'it', 'finance', 'project-head', 'other'];
+export const enumRoles = ['employee', 'manager', 'hr', 'admin', 'director', 'superadmin'];
+export const enumWorkTypes = ['full-time', 'part-time', 'contract', 'internship', 'freelance', 'temporary'];
+export const enumAssetTypes = ['laptop', 'phone', 'id-card', 'access-card', 'sim', 'other'];
+export const enumEducationLevels = ['10th', '12th', 'diploma', 'bachelor', 'master', 'phd', 'certification', 'training', 'other'];
+export const enumEducationTypes = ['full-time', 'part-time', 'distance', 'online', 'other'];
+export const enumMediums = ['english', 'hindi', 'regional', 'other'];
+export const enumOwnership = ['self', 'spouse', 'family', 'rent', 'other'];
+export const enumLivingWith = ['self', 'spouse', 'family', 'friend', 'other'];
+export const enumRelation = ['father', 'mother', 'spouse', 'friend', 'sibling', 'other'];
+export const enumAddress = ['permanent', 'correspondence', 'other'];
+export const enumDocument = ['aadhaar', 'pan', 'uan', 'form-16', 'passbook', 'salary-slip', 'rent-agriment', 'cv', 'Other'];
+export const enumLetter = ['relieving', 'experience', 'joining', 'offer', 'contract-letter', 'other'];
+export const enumIntractionType = ['hr', 'technical', 'managerial', 'other'];
+export const enumIssueAssetCondition = ['new', 'used', 'refurbished'];
+export const enumExitAssetCondition = ['good', 'damaged', 'missing', 'other'];
+export const enumApprovalStatus =  ['pending', 'approved', 'rejected'];
+// export const enumUserStatus = ['active', 'inactive', 'blocked'];
+export const enumGender = ['male', 'female', 'other'];
+export const enumProgresStatus = ['initiated', 'in-progress', 'completed'];
+export const enumBloodGroup = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+    

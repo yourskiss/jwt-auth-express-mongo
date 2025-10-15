@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Login</title>
+</head>
+<body>
+<%- include('../partials/header') %>
+<section class="sectionmin">
+  <h1  class="mainheading">User Login</h1>
+  <p class="maintext">
+    Please enter your email and password to log in.
+  </p>
+ 
+  <form class="formpart" id="formpart" action="/users/login" method="post">
+    <% if (error && typeof error === 'string') { %>
+      <aside class="errormessage"><%= error %></aside>
+    <% } %>
+    <% if (success) { %>
+      <aside class="successmessage"><%= success %></aside>
+      <script>
+        setTimeout(() => {
+          window.location.href = "/users/dashboard";
+        }, 2000); 
+      </script>
+    <% } %>
+    <div>
+        <label>Email:</label>
+        <input 
+            type="test" 
+            name="email" 
+            value="<%= data.email || '' %>"
+        />
+        <% if (error && error.email) { %>
+          <span class="error"><%= error.email %></span>
+        <% } %>
+    </div>
+        <div>
+        <label>Password:</label>
+        <input 
+            type="text" 
+            name="password" 
+            value="<%= data.password || '' %>"
+        />
+        <% if (error && error.password) { %>
+          <span class="error"><%= error.password %></span>
+        <% } %>
+    </div>
+ 
+    <%- include('../partials/button', { text: 'Login' }) %>
+
+    <div class="formbottom">
+      <p><a href="/users/password-forget">Forgot Password?</a></p> 
+      <p>Not have account <a href="/users/register">Create Account</a></p>
+    </div>
+
+  </form>
+</section>
+<%- include('../partials/footer', { title: 'EMP Management System' }) %>
+
+
+ 
+ 
+</body>
+</html>
