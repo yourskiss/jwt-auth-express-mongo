@@ -6,19 +6,15 @@ const app = express();
 import { PORT } from "./config/env.js"; // port
 import connectDB from "./config/db.js"; // db
 
-
-
 import limiterMiddleware from "./middlewares/rateLimitMiddleware.js"; // limit the request in specifice duration
 import corsMiddleware from "./middlewares/corsMiddleware.js"; // cors
 import helmetMiddleware from './middlewares/helmetMiddleware.js'; // helment
 import compressionMiddleware from "./middlewares/compressionMiddleware.js"; // request response compresor 
-
+import employeeRoutes from "./routes/employeeRouters.js";
 import swaggerDocs from "./config/swagger.js"; //  documentation
 // import winstonMiddleware from "./middlewares/winstonMiddleware.js";  // logger  
 // import logRoutes from "./routes/logsRouters.js"; // logs
-// import userRoutes  from "./routes/userRoutes.js"; // user routes
-
-import employeeRoutes from "./routes/employeeRouters.js";
+ 
  
 // make directory accessible for public use
 app.use(express.static("public"));
@@ -65,19 +61,12 @@ swaggerDocs(app);
 // main route
 app.get('/', (req, res) => {
   res.send("Hello from JWT Auth Server");
- // res.redirect("/users")
+ // res.redirect("/emp/login")
 });
 
 // routes
 app.use("/emp", employeeRoutes);
 
-app.use((req, res, next) => {
-  console.log("Cookies accessToken: ", req.cookies.accessToken);
-  console.log("Cookies refreshToken: ", req.cookies.refreshToken);
-  next();
-});
-
- 
  
  
 //404 page

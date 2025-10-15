@@ -6,7 +6,7 @@ import {
   registerRender, registerHandel,
   loginRender, loginHandel,
   refreshAccessToken,
-  logoutEmployee,
+  logoutHandal, logoutFromAll,
   dashboardRender, profileRender
 } from "./../controllers/employeeController.js"
 
@@ -17,7 +17,9 @@ router.post("/register", guestToken, registerHandel);
 router.get("/login", guestToken, loginRender);
 router.post("/login", guestToken, loginHandel);
 router.get("/refresh", refreshAccessToken);
-router.get("/logout", logoutEmployee);
+router.get("/logout", logoutHandal);
+router.get("/logout-all", logoutFromAll);
+
 router.get("/dashboard", verifyToken, dashboardRender);
 router.get("/profile", verifyToken, profileRender);
 
