@@ -15,8 +15,6 @@ import {
     qualificationSchema,
     documentSchema,
     experienceSchema,
-    loginHistorySchema,
-    updateHistorySchema,
     interviewSchema,
     issueAssetSchema,
     exitApprovalSchema,
@@ -46,6 +44,12 @@ const employeeSchema = new mongoose.Schema({
     isVerifyEmail: { type: Boolean, default: false }
   },
 
+  // Auth
+  password: [passwordSchema],
+
+  // OTP
+  otp: [otpSchema],
+
   
   // Emergency
   emergencyContact: [emergencyContactSchema],
@@ -62,14 +66,7 @@ const employeeSchema = new mongoose.Schema({
   // physical Information
   physicalInfo: physicalInfoSchema,
 
-  // Auth
-  password: [passwordSchema],
 
-  // token
-  refreshToken: { type: String, trim: true, default:null },
-
-  // OTP
-  otp: [otpSchema],
 
   // joining
   joining: {
@@ -114,9 +111,6 @@ const employeeSchema = new mongoose.Schema({
   // experience
   experience: [experienceSchema],
 
-  // Logs
-  loginHistory: [loginHistorySchema],
-  updateHistory: [updateHistorySchema]
 
   }, {
     timestamps: true,
@@ -137,7 +131,7 @@ employeeSchema.pre("save", async function (next) {
 
       // Assign to the document
       this.sequenceNo = nextSeq;
-      this.employeeId = `EMP-${String(nextSeq).padStart(7, "0")}`;
+      this.employeeId = process.env.EMP_SHORT_CODE + String(nextSeq).padStart(7, "0");
 
       next();
     } catch (err) {
@@ -154,7 +148,7 @@ employeeSchema.pre("save", async function (next) {
   // Validate environment variable for collection name
   const collectionEmployee = process.env.COL_EMPLOYEE;
   if (!collectionEmployee) {
-    throw new Error('❌ Missing collection in environment variables.');
+    throw new Error('❌ Missing "COL_EMPLOYEE" collection in environment variables.');
   }
   const employeeModel = mongoose.model('Employee', employeeSchema, collectionEmployee);
   export default employeeModel;

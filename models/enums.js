@@ -17,8 +17,8 @@ export const enumIntractionType = ['hr', 'technical', 'managerial', 'other'];
 export const enumIssueAssetCondition = ['new', 'used', 'refurbished'];
 export const enumExitAssetCondition = ['good', 'damaged', 'missing', 'other'];
 export const enumApprovalStatus =  ['pending', 'approved', 'rejected'];
-// export const enumUserStatus = ['active', 'inactive', 'blocked'];
+export const enumInterviewStatus = ['cancelled', 'in-progress', 'reschedule', 'completed'];
 export const enumGender = ['male', 'female', 'other'];
 export const enumProgresStatus = ['initiated', 'in-progress', 'completed'];
 export const enumBloodGroup = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-    
+    // ['active', 'inactive', 'blocked'];

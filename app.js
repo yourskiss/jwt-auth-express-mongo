@@ -60,8 +60,8 @@ swaggerDocs(app);
 
 // main route
 app.get('/', (req, res) => {
-  res.send("Hello from JWT Auth Server");
- // res.redirect("/emp/login")
+ // res.send("Hello from JWT Auth Server");
+  res.redirect("/emp/login")
 });
 
 // routes

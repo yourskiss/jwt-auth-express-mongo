@@ -19,7 +19,7 @@ import {
     enumIssueAssetCondition,
     enumExitAssetCondition,
     enumApprovalStatus,
-    // enumProgresStatus,
+    enumInterviewStatus,
     enumGender,
     enumBloodGroup
 } from './enums.js';
@@ -174,6 +174,7 @@ import {
 
     // External Service subdocument
     const serviceExternalSchema = serviceSchema.clone();
+    serviceExternalSchema.remove('manager');
     serviceExternalSchema.add({
         reportingManagerName: { type: String, trim: true, default: null },
         reportingManagerDesignation: { type: String, trim: true, default: null },
@@ -204,39 +205,23 @@ import {
         audit:auditSchema
   }, { _id: false })
 
-
-  // Login History subdocument
-  export const loginHistorySchema = new mongoose.Schema({
-      at: { type: Date, default: null },
-      ip: { type: String, trim: true, default: null },
-      device: { type: String, trim: true, default: null },
-      platform: { type: String, trim: true, default: null },
-      os: { type: String, trim: true, default: null },
-      browser: { type: String, trim: true, default: null },
-      browserVersion: { type: String, trim: true, default: null }
-  }, { _id: false })
-
-  // Update History subdocument
-  export const updateHistorySchema = new mongoose.Schema({
-      updatetype: { type: String, trim: true, default: null  },
-      by: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', default: null },  
-      at: { type: Date, default: null  }, 
-      ip: { type: String, trim: true, default: null  },  
-      device: { type: String, trim: true, default: null  }, 
-      os: { type: String, trim: true, default: null  },
-      platform: { type: String, trim: true, default: null  },
-      browser:{ type: String, trim: true, default: null  },
-      browserVersion: { type: String, trim: true, default: null },   
-  }, { _id: false })
+ 
 
   // Interview subdocument
   export const interviewSchema = new mongoose.Schema({
     round: { type: Number, min: 1, max: 10 },
-    with: { type: String, enum: enumIntractionType, default: 'other', trim: true },  
-    isDone: { type: Boolean, default: false },
+    interviewWith: { type: String, enum: enumIntractionType, default: 'other', trim: true },  
     interviewBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', default: null },
     interviewAt: { type: Date, default: null },
-    notes: { type: String, trim: true, default: null },
+    topics: [{
+          topic: { type: String, default: null },
+          describe:  { type: String,  default: null },
+          rate:{ type:Number, min:1, max:10, default:5 }
+    }],
+    isCompleted: { type: Boolean, default: false },
+    interviewStatus : { type: String, enum: enumInterviewStatus, default: 'in-progress', trim: true  },
+    overallRating: { type:Number, min:1, max:10, default:5 },
+    finalNotes: { type: String, trim: true, default: null },
   }, { _id: false });
 
   // Issue Asset subdocument
