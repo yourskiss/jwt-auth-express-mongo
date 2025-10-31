@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const refreshTokenSchema = new mongoose.Schema({
+const empTokenSchema = new mongoose.Schema({
   employeeId: { type:String, required: true, trim: true },
   token: { type: String, default: null, index:true },
   createdAt: { type: Date, default: Date.now },
@@ -8,6 +8,7 @@ const refreshTokenSchema = new mongoose.Schema({
   revoked: { type: Boolean, default: false },
   revokedAt: { type: Date, default: null },
   replacedByToken : { type: String, default: null },
+  tokenType:  { type: String, default: null },
   userAgent: {
     device: String,
     platform: String,
@@ -19,13 +20,13 @@ const refreshTokenSchema = new mongoose.Schema({
 });
 
 // Automatically delete expired tokens
-refreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+empTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
   // Validate environment variable for collection name
-  const collectionName = process.env.COL_EMP_TOKEN;
-  if (!collectionName) {
-    throw new Error('❌ Missing "COL_EMP_TOKEN" collection in environment variables.');
+  const EmployeeToken = process.env.EMP_TOKEN;
+  if (!EmployeeToken) {
+    throw new Error('❌ Missing "EMP_TOKEN" collection in environment variables.');
   }
-  const RefreshTokenModel = mongoose.model('EmployeeToken', refreshTokenSchema, collectionName);
+  const RefreshTokenModel = mongoose.model('EmployeeToken', empTokenSchema, EmployeeToken);
   export default RefreshTokenModel;
 

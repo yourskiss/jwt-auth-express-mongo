@@ -25,6 +25,7 @@ export async function tokenCreate(req, res, payload) {
             revoked: false, 
             revokedAt: null,
             replacedByToken:null,
+            tokenType:'Create',
             userAgent : {
                 at: new Date(),
                 device: ua.isMobile ? 'Mobile' : ua.isTablet ? 'Tablet' : 'Desktop',
@@ -42,6 +43,7 @@ export async function tokenCreate(req, res, payload) {
         // Step 3: Set Cookies
         setATC(res, accessToken);
         setRTC(res, refreshToken);
+        console.log(`Token created`);
       }
   } catch (err) {
     // throw new Error(`Token creation failed`, err);
@@ -66,6 +68,8 @@ export async function tokenRemoke(token, res) {
     // Step 2: Remove cookies
       removeATC(res);
       removeRTC(res);
+      return res.redirect("/emp/login");
+
   } catch (err) {
     console.error(`Token revoke failed: ${err.message}`);
   }
@@ -115,15 +119,19 @@ export async function tokenRotate(req, res) {
   const getRT = getRTC(req);
   if (!isRT) {
     console.error("No refresh token found in cookies");
-    return res.status(401).send("No refresh token found in cookies");
+    return res.redirect("/emp/login");
+   // return res.status(401).send("No refresh token found in cookies");
   }
 
-  let payload;
+  let payload = null;
   try {
     payload = verifyRT(getRT); // Must throw on invalid/expired
   } catch (err) {
     console.error("Invalid refresh token:", err.message);
-    return res.status(401).send("Invalid refresh token");
+    removeATC(res);
+    removeRTC(res);
+     return res.redirect("/emp/login");
+    // return res.status(401).send("Invalid refresh token");
   }
 
   // Step 1: Fetch the old token record
@@ -131,18 +139,27 @@ export async function tokenRotate(req, res) {
 
   if (!existing) {
     console.error("Refresh token does not exist in DB");
-    return res.status(401).send("Invalid refresh token");
+    removeATC(res);
+    removeRTC(res);
+     return res.redirect("/emp/login");
+   // return res.status(401).send("Invalid refresh token");
   }
 
   // Step 1b: Optional extra checks (uncomment if needed)
   if (existing.revoked) {
     console.error("Refresh token already revoked");
-    return res.status(401).send("Refresh token already revoked");
+    removeATC(res);
+    removeRTC(res);
+     return res.redirect("/emp/login");
+    // return res.status(401).send("Refresh token already revoked");
   }
 
   if (existing.expiresAt < new Date()) {
     console.error("Refresh token expired");
-    return res.status(401).send("Refresh token expired");
+    removeATC(res);
+    removeRTC(res);
+     return res.redirect("/emp/login");
+    // return res.status(401).send("Refresh token expired");
   }
 
   // Step 2: Generate new tokens
@@ -165,6 +182,7 @@ export async function tokenRotate(req, res) {
       revoked: false,
       revokedAt: null,
       replacedByToken: null,
+      tokenType:'Rotate',
       userAgent: {
         at: new Date(),
         device: ua.isMobile ? 'Mobile' : ua.isTablet ? 'Tablet' : 'Desktop',
@@ -177,8 +195,11 @@ export async function tokenRotate(req, res) {
     });
 
     if (!result) {
-      console.error(`Token not created for employeeId: ${payload.employeeId}`);
-      return res.status(500).send("Token creation failed");
+      console.error(`Token not created for employeeId: ${payload.employeeId}. Please try again`);
+      removeATC(res);
+      removeRTC(res);
+      return res.redirect("/emp/login");
+     // return res.status(500).send("Token creation failed");
     }
 
     // Step 5: Set new cookies

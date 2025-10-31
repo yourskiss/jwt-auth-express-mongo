@@ -1,13 +1,13 @@
-import LoginHistoryModel from "../models/empLoginHistoryModel.js";
+import EmpLoginHistoryModel from "../models/empLoginHistoryModel.js";
 
-export async function logsLogin(req, employeeId) {
+export async function logsLogin(req, employeeId, typ) {
 
   // Step 1: Insert new login
-   const ua = req.useragent || {};
-  const result = await LoginHistoryModel.create({ 
+  const ua = req.useragent || {};
+  const result = await EmpLoginHistoryModel.create({ 
     employeeId:employeeId,
+    loginType: typ,
     userAgent : {
-          at: new Date(),
           device: ua.isMobile ? 'Mobile' : ua.isTablet ? 'Tablet' : 'Desktop',
           platform: ua.platform,
           os: ua.os,
@@ -25,7 +25,7 @@ export async function logsLogin(req, employeeId) {
 
   // Step 2: Fetch IDs of all logins, sorted by newest first
   /*
-  const recentLogins = await LoginHistoryModel
+  const recentLogins = await EmpLoginHistoryModel
     .find({ employeeId })
     .sort({ loginAt: -1 }) // newest first
     .skip(5) // skip the 5 most recent
@@ -37,7 +37,7 @@ export async function logsLogin(req, employeeId) {
   /*
   if (recentLogins.length > 0) {
     const idsToDelete = recentLogins.map(doc => doc._id);
-    await LoginHistoryModel.deleteMany({ _id: { $in: idsToDelete } });
+    await EmpLoginHistoryModel.deleteMany({ _id: { $in: idsToDelete } });
   }
   */
 }

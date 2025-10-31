@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 
-const loginHistorySchema = new mongoose.Schema({
+const empLoginHistorySchema = new mongoose.Schema({
   employeeId: { type:String, required: true },
   loginAt: { type: Date, default: Date.now },
+  loginType: { type:String, default:null },
   userAgent: {
     device: String,
     platform: String,
@@ -15,10 +16,10 @@ const loginHistorySchema = new mongoose.Schema({
  
 
   // Validate environment variable for collection name
-  const collectionName = process.env.COL_EMP_LOGIN_HISTORY;
-  if (!collectionName) {
-    throw new Error('❌ Missing "COL_EMP_LOGIN_HISTORY" collection in environment variables.');
+  const EmployeeLoginHistory = process.env.EMP_LOGIN_HISTORY;
+  if (!EmployeeLoginHistory) {
+    throw new Error('❌ Missing "EMP_LOGIN_HISTORY" collection in environment variables.');
   }
-  const LoginHistoryModel = mongoose.model('EmployeeLoginHistory', loginHistorySchema, collectionName);
-  export default LoginHistoryModel;
+  const EmpLoginHistoryModel = mongoose.model('EmployeeLoginHistory', empLoginHistorySchema, EmployeeLoginHistory);
+  export default EmpLoginHistoryModel;
 

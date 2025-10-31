@@ -5,7 +5,6 @@ export const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET;
 export const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET;
 export const ACCESS_EXPIRY = process.env.ACCESS_TOKEN_EXPIRES_IN;
 export const REFRESH_EXPIRY = process.env.REFRESH_TOKEN_EXPIRES_IN;
-
 export const NODE_ENV = process.env.NODE_ENV;
 export const TOKEN_HTTP_ONLY = process.env.TOKEN_HTTP_ONLY;
 export const SAMESITE_COOKIES = process.env.SAMESITE_COOKIES;
@@ -25,26 +24,6 @@ export const generateRT = (payload) =>  jwt.sign(sanitizePayload(payload), REFRE
 // Verify tokens
  export const verifyAT = (token) =>  jwt.verify(token, ACCESS_SECRET);
  export const verifyRT = (token) =>  jwt.verify(token, REFRESH_SECRET);
-/*
- export const verifyAT = async (token) => {
-  return jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
-      if (err) {
-        console.error("accessToken - token invalid or expired");
-        return;
-      }
-      return decoded
-  })
-}
-export const verifyRT = async (token) => {
-  return jwt.verify(token, REFRESH_SECRET, (err, decoded) => {
-      if (err) {
-         console.error("refreshToken - token invalid or expired")
-         return;
-      }
-      return decoded
-  })
-}
-*/
 
 // set token in cookies 
 export const setATC = (res, token) => res.cookie("accessToken", token, {

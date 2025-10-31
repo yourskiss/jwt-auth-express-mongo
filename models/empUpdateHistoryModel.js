@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const updateHistorySchema = new mongoose.Schema({
+const empUpdateHistorySchema = new mongoose.Schema({
   employeeId: { type:String, required: true, trim: true },
   updateType: { type: String, trim: true, default: null  },
   updateAt: { type: Date, default: Date.now  }, 
@@ -15,10 +15,10 @@ const updateHistorySchema = new mongoose.Schema({
 });
 
   // Validate environment variable for collection name
-  const collectionName = process.env.COL_EMP_UPDATE_HISTORY;
-  if (!collectionName) {
-    throw new Error('❌ Missing "COL_EMP_UPDATE_HISTORY" collection in environment variables.');
+  const EmployeeUpdateHistory = process.env.EMP_UPDATE_HISTORY;
+  if (!EmployeeUpdateHistory) {
+    throw new Error('❌ Missing "EMP_UPDATE_HISTORY" collection in environment variables.');
   }
-  const UpdateHistoryModel = mongoose.model('EmployeeUpdateHistory', updateHistorySchema, collectionName);
-  export default UpdateHistoryModel;
+  const EmpUpdateHistoryModel = mongoose.model('EmployeeUpdateHistory', empUpdateHistorySchema, EmployeeUpdateHistory);
+  export default EmpUpdateHistoryModel;
 

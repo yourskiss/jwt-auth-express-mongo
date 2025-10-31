@@ -1,121 +1,58 @@
 // models/employeeModel.js
 import mongoose from 'mongoose';
-import {
-    enumProgresStatus,
-} from './enums.js';
-import {
-    fileSchema,
-    // auditSchema, 
-    passwordSchema,
-    otpSchema,
-    physicalInfoSchema,
-    serviceSchema, 
-    emergencyContactSchema,
-    addressSchema,
-    qualificationSchema,
-    documentSchema,
-    experienceSchema,
-    interviewSchema,
-    issueAssetSchema,
-    exitApprovalSchema,
-    exitAssetSchema,
-    handoverApprovalSchema
-} from './subdocument.js';
+import { enumBloodGroup, enumGender } from './enums.js';
  
 
-
-
-// main schema
 const employeeSchema = new mongoose.Schema({
   sequenceNo : { type: Number, unique: true,  default: 0 },
   employeeId: { type: String, unique: true, index: true },
   fullname: { type: String, required: true, trim: true },
   isActive : { type: Boolean, default: true },
-
-  // Contact Info
   contact: {
     mobile: { type: String,  unique: true,  index: true, required: true, trim: true, match: /^[6-9]\d{9}$/  },
     altMobile: { type: String, trim: true, default:null, match: /^[6-9]\d{9}$/ },
     workMobile: { type: String, trim: true, default:null, match: /^[6-9]\d{9}$/ },
     isVerifyMobile: { type: Boolean, default: false },
-    email: { type: String,  unique: true, index: true, trim: true, match: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/ },
+    email: { type: String,  unique: true, index: true, required: true, trim: true, match: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/ },
     altEmail: { type: String, trim: true, default:null, match: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/ },
     workEmail: { type: String, trim: true, default:null, match: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/ },
     isVerifyEmail: { type: Boolean, default: false }
   },
-
-  // Auth
-  password: [passwordSchema],
-
-  // OTP
-  otp: [otpSchema],
-
-  
-  // Emergency
-  emergencyContact: [emergencyContactSchema],
-
-  // address
-  address:[addressSchema],
-
-  // Profile Picture
-  profilePicture: [{
-    name: { type: String, enum: ['profile', 'cover', 'dashboardicon', 'other'], default: 'profile' },
-    file:fileSchema
+  password: [{
+    value: { type: String, required: true, trim: true, select: false  },
+    at: { type: Date, default: Date.now },
   }],
-
-  // physical Information
-  physicalInfo: physicalInfoSchema,
-
-
-
-  // joining
+  otp: {
+    otpFor: { type: String, enum: ['login', 'registration','forget-password','verification','other'], default: 'other' },
+    otpIn: { type: String, enum: ['email', 'mobile'], default: 'email' },
+    temp: { type: String, trim: true, default:null },
+    expiryAt: { type: Date, trim: true, default:null },
+    generatedAt:{ type: Date, trim: true, default:null },
+    validatedAt:{ type: Date, trim: true, default:null },
+    isValid:{ type:Boolean, default:false }
+  },
+  physicalInfo: {
+    height: {type: Number,vmin: 30,max: 300,  trim: true, default:null },
+    weight: {type: Number, min: 1,max: 500,  trim: true, default:null },
+    bloodGroup: {type: String,enum: enumBloodGroup,default:null},
+    dateOfBirth: {type: Date,default:null},
+    gender: {type: String,enum: enumGender, default:'Other'},
+    isDisabilities: { type:Boolean, default:false },
+    disabilities: {type: String,default:null,},
+    isDiseases: { type:Boolean, default:false },
+    diseases: {type: String, default: null},
+    medicalNotes: {type: String,default:null}
+  },
   joining: {
     date : { type: Date, default: new Date() },
-    interview: [interviewSchema],
-    companyAssetsIssued: [issueAssetSchema]
+    condidateID:{ type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true },
   },
 
-  // Leaving
-  leaving: {
-    resignationDate:{ type: Date, default:null },
-    leavingDate: { type: Date, default:null },
-    noticePeriodInDays: { type: Number, min: 0, max: 365, default: 30 },
-    reasonForLeaving: { type: String, trim: true, default:null },
-    notes: { type: String, trim: true, default: null },
-    companyAssets: [exitAssetSchema],
-    approval: [exitApprovalSchema]
-  },
 
-  // Handover
-  projectHandover: [{
-    projectName: { type: String, trim: true, default: null },
-    description: { type: String, trim: true, default: null },
-    handoverDate: { type: Date, trim: true, default: null},
-    receivedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee',  },
-    receivedAt: { type: Date, trim: true, default: null },
-    notes: { type: String, trim: true, default: null},
-    status: { type: String, enum: enumProgresStatus, default: 'initiated' },
-    documents:[fileSchema],
-    approval: [handoverApprovalSchema]
-  }],
-  
-  // service
-  serviceHistory:[serviceSchema],
-
-  // qualification
-  qualification:[qualificationSchema],
-
-  // documentation
-  documentation: [documentSchema],
-
-  // experience
-  experience: [experienceSchema],
-
-
-  }, {
+}, {
     timestamps: true,
     versionKey: false
-  });
+});
   
 
 // ✅ PRE-SAVE For Registation
@@ -131,7 +68,7 @@ employeeSchema.pre("save", async function (next) {
 
       // Assign to the document
       this.sequenceNo = nextSeq;
-      this.employeeId = process.env.EMP_SHORT_CODE + String(nextSeq).padStart(7, "0");
+      this.employeeId = process.env.EMP_SHORT_CODE + String(nextSeq).padStart(process.env.EMP_SHORT_ZERO, "0");
 
       next();
     } catch (err) {
@@ -141,15 +78,18 @@ employeeSchema.pre("save", async function (next) {
     next();
   }
 });
+
+
+
  
 
 
 
   // Validate environment variable for collection name
-  const collectionEmployee = process.env.COL_EMPLOYEE;
-  if (!collectionEmployee) {
-    throw new Error('❌ Missing "COL_EMPLOYEE" collection in environment variables.');
+  const EmployeesCollection = process.env.EMPLOYEES;
+  if (!EmployeesCollection) {
+    throw new Error('❌ Missing "EMPLOYEES" collection in environment variables.');
   }
-  const employeeModel = mongoose.model('Employee', employeeSchema, collectionEmployee);
-  export default employeeModel;
+  const EmployeeModel = mongoose.model('EmpCol', employeeSchema, EmployeesCollection);
+  export default EmployeeModel;
    

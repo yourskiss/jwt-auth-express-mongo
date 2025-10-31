@@ -48,27 +48,14 @@ export const verifyToken = (req, res, next) => {
 };
 
 
-
-
-
 const attemptAutoLogin = (req, res, next) => {
   const isRT = isRTC(req);
-  const getRT = getRTC(req);
   if (!isRT) {
+    console.warn("AutoLogin: No refresh token found");
     return res.redirect("/emp/login?no-refresh-token");
   }
+
   return res.redirect("/emp/refresh");
-  /*
-  try {
-    const payload = verifyRT(getRT); 
-    const newAccessToken = generateAT(payload);
-    setATC(res, newAccessToken);
-    req.user = payload;
-    console.log("employeeMiddleware - attemptAutoLogin - success", { isRT, getRT, payload });
-    return next(); 
-  } catch (err) {
-    console.log("employeeMiddleware - attemptAutoLogin - error", err);
-    return res.redirect("/emp/login"); // ✅ Ensure response is handled
-  }
-    */
 };
+
+

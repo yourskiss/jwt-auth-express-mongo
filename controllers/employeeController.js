@@ -1,16 +1,16 @@
 // controllers/employeeController.js
-import employeeModel from "./../models/employeeModels.js"
+import EmployeeModel from "./../models/employeeModels.js"
 import { logsUpdate } from "./empUpdateHistoryController.js";
 import { logsLogin } from "./empLoginHistoryController.js";
 import { tokenAllRemoke, tokenCreate, tokenRemoke, tokenRotate } from "./empTokenController.js";
 
 import { hashedPassword, comparePassword } from '../utils/password.js';
- import {isRTC, getRTC} from "./../utils/tokenUtils.js";
+ import {isRTC, getRTC, verifyRT } from "./../utils/tokenUtils.js";
 
  
 // RENDER REGISTER PAGE
 export const registerRender = (req, res) => {
-  res.render("employee/register", { message: null });
+  return res.render("employee/register", { message: null });
 };
 
 // REGISTER NEW EMPLOYEE
@@ -20,17 +20,17 @@ export const registerHandel = async (req, res) => {
       return res.render("employee/register", { message: "All fields are required" });
   }
   try {
-    const existingEmail = await employeeModel.findOne({ 'contact.email': email });
+    const existingEmail = await EmployeeModel.findOne({ 'contact.email': email });
     if (existingEmail) {
       return res.render("employee/register", { message: `Email already registered - ${existingEmail.contact.email}` });
     }
-    const existingMobile = await employeeModel.findOne({ 'contact.mobile': mobile });
+    const existingMobile = await EmployeeModel.findOne({ 'contact.mobile': mobile });
     if (existingMobile) {
       return res.render("employee/register", { message: `Mobile already registered - ${existingMobile.contact.mobile}` });
     }
 
     let hasshedWithSaltPassword = await hashedPassword(password);
-    const newEmployee = new employeeModel({ 
+    const newEmployee = new EmployeeModel({ 
         fullname, 
         contact:{mobile, email}, 
         password: [{value: hasshedWithSaltPassword, at: new Date()}], 
@@ -38,7 +38,7 @@ export const registerHandel = async (req, res) => {
     await newEmployee.save();
     await logsUpdate(req, newEmployee.employeeId, 'Create');
 
-    res.redirect("/emp/login");
+    return res.redirect("/emp/login");
   } catch (err) {
     if (err.name === 'ValidationError') {
       const messages = Object.values(err.errors).map(val => val.message);
@@ -46,13 +46,17 @@ export const registerHandel = async (req, res) => {
       return res.render("employee/register", { message: messages.join(", ") });
     }
     console.error("Register Server error:", err);
-    res.render("employee/register", { message: "Server error. Try again." });
+    return res.render("employee/register", { message: "Server error. Try again." });
   }
 };
 
 // RENDER LOGIN PAGE
-export const loginRender = (req, res) => {
-  res.render("employee/login", { message: null });
+export const loginRender = async(req, res) => {
+  const isRT = isRTC(req);
+  if (isRT) {
+    return res.redirect("/emp/refresh");
+  }
+  return res.render("employee/login", { message: null });
 };
 
 
@@ -63,46 +67,52 @@ export const loginHandel = async (req, res) => {
     return res.render("employee/login", { message: "All fields are required" });
   }
   try {
-    const employee = await employeeModel.findOne({ "contact.email": email }).select("+password.value");
-    if (!employee || !employee.password?.length) {
+    const result = await EmployeeModel.findOne({ "contact.email": email }).select("+password.value");
+    if (!result || !result.password?.length) {
       return res.render("employee/login", { message: "Invalid credentials" });
     }
-    const hash = employee.password.at(-1).value;
+    const hash = result.password.at(-1).value;
     const isMatch = await comparePassword(password, hash); 
     if (!isMatch) {
       return res.render("employee/login", { message: "Invalid password" });
     }
     const payload = {
-      id: employee._id,
-      employeeId: employee.employeeId,
-      fullname: employee.fullname,
-      email: employee.contact.email,
-      mobile: employee.contact.mobile,
+      id: result._id,
+      employeeId: result.employeeId,
+      fullname: result.fullname,
+      email: result.contact.email,
+      mobile: result.contact.mobile,
     };
     await tokenCreate(req, res, payload);
-    await logsLogin(req, employee.employeeId);
-    res.redirect("/emp/dashboard");
+    await logsLogin(req, result.employeeId, 'credential');
+    return res.redirect("/emp/dashboard");
   } catch (err) {
     console.error("Login Server error:", err);
     return res.render("employee/login", { message: "Server error. Try again." });
   }
 };
 
+
 // REFRESH TOKEN ENDPOINT
 export const refreshAccessToken = async (req, res) => {
-  const isRT = isRTC(req);
-  if (!isRT) return res.redirect("/emp/login");
   try {
-    await tokenRotate(req, res);
-    console.log("refresh redirect now dashboard"); 
-    res.redirect("/emp/dashboard");
+    const isRT = isRTC(req);
+    const getRT = getRTC(req);
+    if (!isRT) {
+      return res.redirect("/emp/login?missing-token");
+    }
+    await tokenRotate(req, res); // This now handles redirect internally
+    const payload = verifyRT(getRT); 
+    await logsLogin(req, payload.employeeId, 'Refresh-Token');
   } catch (err) {
-    console.error("Token refresh error:", err);
-    res.redirect("/emp/login?error");
+    console.error("Token refresh error:", err.message);
+    // Always make sure the response is returned or redirected once
+    if (!res.headersSent) {
+      return res.redirect("/emp/login?refresh-failed");
+    }
   }
 };
- 
-
+  
 
 
 
@@ -114,10 +124,10 @@ export const logoutHandal = async (req, res) => {
     if (isRT) {
       await tokenRemoke(getRT, res);
     }
-    res.redirect("/emp/login?logout");
+    return res.redirect("/emp/login");
   } catch (err) {
     console.error("Logout error:", err);
-    res.redirect("/emp/login");
+    return res.redirect("/emp/login?logout-error");
   }
 };
 
@@ -128,10 +138,10 @@ export const logoutFromAll = async (req, res) => {
     if (isRT) {
       await tokenAllRemoke(req, res);
     }
-    res.redirect("/emp/login?logout");
+    return res.redirect("/emp/login");
   } catch (err) {
     console.error("Logout error:", err);
-    res.redirect("/emp/login");
+    return res.redirect("/emp/login?logout-error");
   }
 };
 
