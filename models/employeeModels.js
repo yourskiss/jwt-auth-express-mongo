@@ -31,22 +31,22 @@ const employeeSchema = new mongoose.Schema({
     validatedAt:{ type: Date, trim: true, default:null },
     isValid:{ type:Boolean, default:false }
   },
-  physicalInfo: {
-    height: {type: Number,vmin: 30,max: 300,  trim: true, default:null },
-    weight: {type: Number, min: 1,max: 500,  trim: true, default:null },
-    bloodGroup: {type: String,enum: enumBloodGroup,default:null},
-    dateOfBirth: {type: Date,default:null},
-    gender: {type: String,enum: enumGender, default:'Other'},
-    isDisabilities: { type:Boolean, default:false },
-    disabilities: {type: String,default:null,},
-    isDiseases: { type:Boolean, default:false },
-    diseases: {type: String, default: null},
-    medicalNotes: {type: String,default:null}
-  },
-  joining: {
-    date : { type: Date, default: new Date() },
-    condidateID:{ type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true },
-  },
+  // physicalInfo: {
+  //   height: {type: Number,vmin: 30,max: 300,  trim: true, default:null },
+  //   weight: {type: Number, min: 1,max: 500,  trim: true, default:null },
+  //   bloodGroup: {type: String,enum: enumBloodGroup,default:null},
+  //   dateOfBirth: {type: Date,default:null},
+  //   gender: {type: String,enum: enumGender, default:'Other'},
+  //   isDisabilities: { type:Boolean, default:false },
+  //   disabilities: {type: String,default:null,},
+  //   isDiseases: { type:Boolean, default:false },
+  //   diseases: {type: String, default: null},
+  //   medicalNotes: {type: String,default:null}
+  // },
+  // joining: {
+  //   date : { type: Date, default: new Date() },
+  //   condidateID:{ type: mongoose.Schema.Types.ObjectId, ref: 'Employee', required: true },
+  // },
 
 
 }, {

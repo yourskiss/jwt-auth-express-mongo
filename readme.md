@@ -2,14 +2,34 @@
 <p>This web application is a secure and scalable user management system built with Express.js, MongoDB Atlas, and Mongoose, following the MVC (Model-View-Controller) architecture. It features robust authentication, role-based access control, session management, and user-friendly CRUD operations.
 <br />
 The app is designed with a focus on security, maintainability, and user experience. It includes critical functionality like email-based OTP verification, password reset, image upload and processing, and soft deletion (activate/deactivate users).</p>
+
+
+This web application is a secure and scalable user management system built with Express.js, MongoDB Atlas, and Mongoose, following the MVC (Model-View-Controller) architecture.
+It features robust authentication, role-based access control, session management, and user-friendly CRUD operations.
+
+The app is designed with a focus on security, maintainability, and user experience. It includes key functionality such as email-based OTP verification, password reset, image upload and processing, and soft deletion (activate/deactivate users).
  
 <h3>🔐 Authentication</h3>
 <ul> 
-<li><strong>Session-Based Authentication:</strong> Managed with <code>express-session</code> and <code>connect-mongo</code> for persistent sessions stored in MongoDB</li>
-<li><strong>Email & Password Login:</strong> Secure credential handling with <code>Bcrypt</code> password hashing</li> 
-<li><strong>Email OTP Verification:</strong> Enforced for both user registration and password reset workflows</li> 
-<li><strong>Secure Routing:</strong> Custom middleware protects sensitive routes and resources</li> 
-<li><strong>Role-Based Access Control (RBAC):</strong> Fine-grained access for <code>user</code>, <code>admin</code>, and <code>superadmin</code> roles</li> 
+<li><strong>Access Token:</strong>
+Short-lived JWT used for authenticating API requests. Automatically attached via secure HTTP-only cookies to prevent XSS attacks.</li>
+<li><strong>Refresh Token:</strong>
+Long-lived JWT used to re-authenticate users without re-entering credentials.
+Stored securely in HTTP-only cookies and persisted in the Token collection in MongoDB for validation and revocation control.</li>
+<li><strong>Multi-Device Login Support:</strong>
+Each login on a new device or browser generates a unique refresh token entry in the token collection, allowing users to stay signed in on multiple devices independently.</li>
+<li><strong>Automatic Token Renewal:</strong>
+When an access token expires, the refresh token is used to obtain a new one without requiring the user to log in again.</li>
+<li><strong>Secure Logout:</strong>
+On logout, the corresponding refresh token is deleted from the token collection and cookie cleared from the client.</li>
+<li><strong>Email & Password Login:</strong>
+Secure credential handling with bcrypt password hashing.</li>
+<li><strong>Email OTP Verification:</strong>
+Enforced during user registration and password reset workflows for enhanced account security.</li>
+<li><strong>Secure Routing:</strong>
+Custom middleware validates access tokens and protects sensitive routes and resources.</li>
+<li><strong>Role-Based Access Control (RBAC):</strong>
+Fine-grained access management for user, admin, and superadmin roles.</li>
 </ul>
 
 <h3>👤 User Management</h3>
@@ -130,8 +150,6 @@ Testing is in progress and will use Node's built-in <code>node:test</code> modul
 <p>This application is built with extensibility in mind, allowing for easy integration of additional features and technologies as the project evolves.</p>
 <ul>
 <li><strong>Cloud Storage for Images:</strong> Integration with services like Cloudinary, Firebase Storage, or AWS S3 for scalable image hosting</li> 
-<li><strong>JWT Authentication:</strong> Support for stateless API authentication using JSON Web Tokens</li>
-<li><strong>Refresh Tokens:</strong> Secure token renewal mechanism for long-lived sessions</li> 
 <li><strong>Multi-Factor Authentication (MFA):</strong> Additional layer of login security via email, SMS, or authenticator apps</li> 
 <li><strong>Custom Email Templates:</strong> Use of MJML or SendGrid for responsive and branded transactional emails</li> 
 <li><strong>Automated Testing:</strong> Integration with testing frameworks like <code>Jest</code> or <code>Mocha/Chai</code> for unit and integration testing</li>
